@@ -45,7 +45,7 @@ The source file you must edit is
 add a line like this    
 `.vidioc_expbuf			= vb2_ioctl_expbuf,`    
 in struct v4l2_ioctl_ops camera0_ioctl_ops, eg just after ".vidioc_dqbuf = vb2_ioctl_dqbuf," somewhere around line 1481.
-The build an install it on your system. A good tip I got was to make an edit in the info found at the bottom of the driver source and then you can look for that after install+reboot using,    
+Then build and install it on your system. A good tip I got was to make an edit in the info found at the bottom of the driver source and then you can look for that after install+reboot using,    
 `modinfo bcm2835-v4l2`    
 Also you can run the '4l2-compliance' command again and if its working the line near the bottom should instead say,    
 `test VIDIOC_EXPBUF: OK`
