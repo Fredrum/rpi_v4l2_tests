@@ -17,7 +17,7 @@ If you run:
 near the top you should have a line saying    
 `Compliance test for device /dev/video0:`    
     
-then if you go to the bottom of the test printout you should see a line that looks something like this,    
+then if you go to the bottom of the test printout you might see a line that looks something like this,    
 `test VIDIOC_EXPBUF: OK (Not Supported)`    
     
 If you get this 'not supported' message, then you'll have the same problem as I had as the systems camera driver won't allow for streaming. The solution involves making a small addition to the raspberry kernel camera driver and if you haven't done anything like that before (I hadn't) you'll need to do read up a little on how to build and install one of the drivers. It's totally doable though! You'll start by downloading the full kernel tree which might take a while so you might want kick that download off soon! :)    
