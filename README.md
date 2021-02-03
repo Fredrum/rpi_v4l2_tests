@@ -10,17 +10,18 @@ The camera I'm using is the RaspiCam2, aka Sony imx219.
 The first (and currently only) demo is doing camera video capture using V4L2 and setting up DMA buffers to create a 'zero copy' hardware pipeline all the way to GL texture.
 I ended up using glfw as that seemed to allow for getting a gl window thrown up with minimal amount of code. There were a few non obvious tricks to getting this to work which I will describe below.
 
-Actually first you might as well try to build and run as it's possible the issues I had have been fixed.
+Actually first you might as well try to build and run as it's possible the issues I had have been fixed.    
+    
 **0. Try Just Build and run.**
 Install some dependencies    
 `sudo apt install libglfw3-dev libgles2-mesa-dev`    
 `git clone https://github.com/Fredrum/rpi_v4l2_tests.git`    
 `cd rpi_v4l2_tests`  
 `make`    
-If that worked run,    
-`glDmaTexture`
-
-
+If all seems good, run,    
+`glDmaTexture`    
+    
+If that didn't work you might want to read on...
 
 
 **1. The camera driver (at the time) didn't actually allow for streaming video.**    
@@ -43,12 +44,28 @@ The build an install it on your system. A good tip I got was to make an edit in 
 `modinfo bcm2835-v4l2`    
 Also you can run the '4l2-compliance' command again and if its working the line near the bottom should instead say,    
 `test VIDIOC_EXPBUF: OK`
+    
+Here's a forum thread about this:  https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=291940    
+    
+**2. It sort of works but you get only 3-4 fps!**    
+I didn't realise that for the camera to be able to operate as a streaming videocamera I also had to add a special config file.
+So if this happens for you too then try making a file here,    
+`/etc/modprobe.d/bcm2835-v4l2.conf`    
+containing the text
+`options bcm2835-v4l2 max_video_width=1920`    
+`options bcm2835-v4l2 max_video_height=1080`    
+    
+To verify that it now works you can run these commands,
+`> v4l2-ctl -v width=1280,height=720,pixelformat=RX24`    
+`> v4l2-ctl --stream-mmap --stream-count=-1 -d /dev/video0 --stream-to=/dev/null`    
+
+My forum thread about this one:  https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=298040    
 
 
 
 
 
-https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=291940
+
 
 https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=298040
 
