@@ -1,4 +1,4 @@
-# An V4L2 Video to GL Hardware path Example for Raspberry Pi    
+# V4L2 Video to GL Hardware path Example for Raspberry Pi    
 
 I'll be putting my Raspberry Pi v4l2 tests here if they are half decent.
 The idea is to have examples that are simple to follow and read. Not to be well structured code.
