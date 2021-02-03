@@ -1,4 +1,4 @@
-# V4L2 Video to GL Hardware path Example for Raspberry Pi    
+# V4L2 Video to GL Hardware Path example for Raspberry Pi    
 
 I'll be putting my Raspberry Pi v4l2 tests here if they are half decent.
 The idea is to have examples that are simple to follow and read. Not to be well structured code.
@@ -83,7 +83,7 @@ Strangely the RGB pixel color order seems to sometimes switch to BGR and I don't
     
 There's tearing in the playback. I haven't bothered trying to fix this yet as there's an as-of-yet unsolved Raspberry OS problem with the tearing. Also I didn't want to add double bufferering as my goal is low latency.    
     
-Talking about the latency I think it might be faster and probably also lower system/bus bandwith use setting the camera to produce some YUV format. I didn't want to do that either as I think it would have involved setting up an ISP unit and I wanted to keep it simple to start with.
+Talking about the latency I think it might be faster and probably also lower system/bus bandwith use setting the camera to produce some YUV format. I didn't want to do that either as I think it would have involved setting up an ISP unit and I wanted to keep it simple to start with. The issue here is that you are limited in what pixelformats are compatible with the RPis 3d graphics, V3D.
     
     
     
