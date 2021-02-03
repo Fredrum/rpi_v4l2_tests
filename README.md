@@ -2,7 +2,7 @@
 
 I'll be putting my Raspberry Pi v4l2 tests here if they are half decent.
 The idea is to have examples that are simple to follow and read. Not to be well structured code.
-I had trouble finding good examples on the web that did this so thought it might help others if I could do it.
+I had trouble finding good examples on the web that did this so thought it might help others if I could make one.
 
 I am working on a Raspberry Pi4b with 32bit Raspbian Buster OS.    
 Kernel version,    
@@ -70,7 +70,7 @@ My forum thread about this one:  https://www.raspberrypi.org/forums/viewtopic.ph
 **3. Don't use the imx219 dt overlay!**    
 For this particular setup to work we don't want to use this driver. I tried it out and seemed to get low latency and high frame rate but it was a red herring.   
 `dtoverlay=imx219`    
-This driver is made for capturing raw bayered pixel data and its meant for the 'libcamera' library.    
+This driver is made for capturing raw bayered sensor data and its meant for the 'libcamera' library.    
 My forum thread here:  https://www.raspberrypi.org/forums/viewtopic.php?f=107&t=293712    
     
     
