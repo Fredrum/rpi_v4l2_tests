@@ -31,7 +31,7 @@ If that didn't work you might want to read on...
 
 **1. The camera driver (at the time) didn't actually allow for streaming video.**    
 If you run:    
-`> 4l2-compliance`    
+`> v4l2-compliance`    
     
 near the top you should have a line saying    
 `Compliance test for device /dev/video0:`    
