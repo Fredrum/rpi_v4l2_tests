@@ -12,9 +12,10 @@ I ended up using glfw as that seemed to allow for getting a gl window thrown up 
 
 Actually first you might as well try to build and run as it's possible the issues I had have been fixed.    
     
-**0. Try Just Build and run.**
+**0. Try Just Build and run.**    
 Install some dependencies    
 `sudo apt install libglfw3-dev libgles2-mesa-dev`    
+Install & Build the test program    
 `git clone https://github.com/Fredrum/rpi_v4l2_tests.git`    
 `cd rpi_v4l2_tests`  
 `make`    
@@ -62,16 +63,27 @@ To verify that it now works you can run these commands,
 My forum thread about this one:  https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=298040    
 
 
+**3. Don't use the imx219 dt overlay!**    
+For this particular setup to work we don't want to use this driver. I tried it out and seemed to get low latency and high frame rate.   
+'dtoverlay=imx219'    
+This driver is made for capturing raw bayered pixel data and its meant for the 'libcamera' library.    
+My forum thread here:  https://www.raspberrypi.org/forums/viewtopic.php?f=107&t=293712    
+    
+    
+**4. Goto  0.**
 
 
 
-
-
-https://www.raspberrypi.org/forums/viewtopic.php?f=43&t=298040
-
-v4l2-ctl -d /dev/video0 --list-formats
-
-https://www.raspberrypi.org/forums/viewtopic.php?f=107&t=293712
-
-sudo apt install libglfw3-dev libgles2-mesa-dev
+## Some known issues    
+Strangely the RGB pixel color order seems to switch sometimes to BGR and I don't understand why yet. If this happens you can change the pixelformat in eglCreateImageKHR() from DRM_FORMAT_XRGB8888 -> DRM_FORMAT_XBGR8888 or vice versa.    
+    
+There's tearing in the playback. I haven't bothered trying to fix this yet as there's an as-of-yet unsolved Raspberry OS problem with the tearing. Also I didn't want to add double bufferering as my goal is low latency.    
+    
+Talking about the latency I think it might be faster and probably also lower system/bus bandwith use setting the camera to produce some YUV format. I didn't want to do that either as I think it would have involved setting up an ISP unit and I wanted to keep it simple to start with.
+    
+    
+    
+Please let me know if you can spot things that are incorrect or that can be improved!    
+    
+Cheer!
 
