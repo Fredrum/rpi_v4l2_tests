@@ -6,8 +6,8 @@ I had trouble finding good examples on the web that did this so thought it might
 
 I am working on a Raspberry Pi4b with 32bit Raspbian Buster OS.    
 Kernel version,    
-Linux sensitpi 5.10.17-v7l+ #1403 SMP Mon Feb 22 11:33:35 GMT 2021 armv7l GNU/Linux
-**The camera I'm using is the RaspiCam2, aka Sony imx219.**
+Linux sensitpi 5.10.17-v7l+ #1403 SMP Mon Feb 22 11:33:35 GMT 2021 armv7l GNU/Linux    
+**The camera I'm using is the RaspiCam2, aka Sony imx219.**    
 
 The first (and currently only) demo is doing camera video capture using V4L2 and setting up DMA buffers to create a 'zero copy' hardware pipeline all the way to GL texture.
 I ended up using glfw as that seemed to allow for getting a gl window thrown up with minimal amount of code. There were a few non obvious tricks to getting this to work which I will describe below.
