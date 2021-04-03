@@ -4,7 +4,7 @@
 /// texture.						 		  	  ///
 ///-----------------------------------------------///
 //
-// sudo apt-get install libglfw3-dev libgles2-mesa-dev
+// sudo apt install libglfw3-dev libgles2-mesa-dev
 
 #define GLFW_INCLUDE_ES2
 #include <GLFW/glfw3.h>
@@ -27,9 +27,9 @@ static const GLchar* vertex_shader_source =
 	"in vec3 position;\n"
 	"in vec2 tx_coords;\n"
 	"out vec2 v_texCoord;\n"
-	"void main() {\n"
-	"   gl_Position = vec4(position, 1.0);\n"
-	"	v_texCoord = tx_coords;  \n"
+	"void main() {  \n"
+	"	gl_Position = vec4(position, 1.0);\n"
+	"	v_texCoord = tx_coords;\n"
 	"}\n";
 	
 static const GLchar* fragment_shader_source =
@@ -43,7 +43,7 @@ static const GLchar* fragment_shader_source =
 	"	out_color = texture2D( texture, v_texCoord );\n"
 	"}\n";
 
-/// negative x,z is bottom left and first vertex
+/// negative x,y is bottom left and first vertex
 static const GLfloat vertices[][4][3] =
 {
     { {-1.0, -1.0, 0.0}, { 1.0, -1.0, 0.0}, {-1.0, 1.0, 0.0}, {1.0, 1.0, 0.0} }
@@ -107,7 +107,7 @@ int main(void) {
 	glfwInit();
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 	glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 	window = glfwCreateWindow(WIDTH, HEIGHT, __FILE__, NULL, NULL);
@@ -145,13 +145,13 @@ int main(void) {
 	int fd=-1;
 	const char* camera_device = "/dev/video0";
 	
-	fd = open(camera_device, O_RDWR | O_NONBLOCK);
-    if(fd == -1){
+	fd = open(camera_device, O_RDWR);
+	if(fd == -1){
 		printf("Cannot open device '%s'\n", camera_device);
 		return -1;
-    }
-    printf("Camera device opened: %s with fd: %d\n", camera_device, fd);
-	
+	}
+	printf("Camera device opened: %s with fd: %d\n", camera_device, fd);
+
 	struct v4l2_capability cap;
 	memset(&cap, 0, sizeof(cap));
 	if( ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1)
@@ -168,22 +168,22 @@ int main(void) {
 		printf("This is no video capture device\n");
 		return -1;
 	}
-    if(!(cap.capabilities & V4L2_CAP_STREAMING))
-    {
-      printf("No streaming i/o support\n");
-      return -1;
-    }
+	if(!(cap.capabilities & V4L2_CAP_STREAMING))
+	{
+		printf("No streaming i/o support\n");
+		return -1;
+	}
 	
 	struct v4l2_format fmt;
 	memset(&fmt, 0, sizeof(fmt));
 	fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 	fmt.fmt.pix.width       = WIDTH;
 	fmt.fmt.pix.height      = HEIGHT;
-	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGRX32; /// a yuv format might be faster but needs ISP unit?
+	fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_BGRX32; /// V4L2_PIX_FMT_BGRX32  a yuv format might be faster but needs ISP unit?
 	fmt.fmt.pix.field       = V4L2_FIELD_NONE;
 	/// try setting this
 	ioctl(fd, VIDIOC_S_FMT, &fmt);
-	
+
 	/// check what was actually set
 	if(fmt.fmt.pix.pixelformat != V4L2_PIX_FMT_BGRX32)
 	{
@@ -194,7 +194,7 @@ int main(void) {
 	{
 		printf("Warning: driver is sending image at %dx%d\n", fmt.fmt.pix.width, fmt.fmt.pix.height);
 	}
-	
+
 	printf("Device accepted fourcc:  %c%c%c%c\n",  /// RX24==BGRX32
 	fmt.fmt.pix.pixelformat,
 	fmt.fmt.pix.pixelformat >> 8,
@@ -227,7 +227,7 @@ int main(void) {
 	}
 	buffer_count = reqbuf.count;
 	printf("V4L2 Buffer Count:  %d\n", buffer_count);
-	
+
 	/// VIDIOC_EXPBUF
 	/// you must do this for each of your V4L2 buffers (above).
 	/// if you do double buffering for example
@@ -244,7 +244,7 @@ int main(void) {
 	}
 	expBuf_fd = expbuf.fd;
 	printf("Dmabuf fd:  %d\n", expBuf_fd);
-	
+
 	/// Kick off the streaming
 	if(ioctl(fd, VIDIOC_STREAMON, &(enum v4l2_buf_type){V4L2_BUF_TYPE_VIDEO_CAPTURE}))
 	{
@@ -266,7 +266,7 @@ int main(void) {
 					{
 						EGL_WIDTH, fmt.fmt.pix.width,
 						EGL_HEIGHT, fmt.fmt.pix.height,
-						EGL_LINUX_DRM_FOURCC_EXT, DRM_FORMAT_XRGB8888,  /// takes 16 or 32 bits per pixel
+						EGL_LINUX_DRM_FOURCC_EXT, DRM_FORMAT_XRGB8888,  /// takes 16 or 32 bits per pixel (or 8 probably)
 						EGL_DMA_BUF_PLANE0_FD_EXT, expBuf_fd,
 						EGL_DMA_BUF_PLANE0_OFFSET_EXT, 0,
 						EGL_DMA_BUF_PLANE0_PITCH_EXT, fmt.fmt.pix.bytesperline,
@@ -289,6 +289,7 @@ int main(void) {
 	glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, dma_image);
 	glGetUniformLocation(shader_program, "texture");
 
+	/// END create DMA texture ---------------------------------------
 	
 	struct v4l2_buffer buf;
 	memset(&buf, 0, sizeof(buf));
@@ -296,13 +297,15 @@ int main(void) {
 	buf.memory = V4L2_MEMORY_MMAP;
 	buf.index = 0;
 
-	if(ioctl(fd, VIDIOC_QUERYBUF, &buf) == -1)
-	{
-		perror("VIDIOC_QUERYBUF");
-		return -1;
-	}
+	//if(ioctl(fd, VIDIOC_QUERYBUF, &buf) == -1)
+	//{
+		//perror("VIDIOC_QUERYBUF");
+		//return -1;
+	//}
 
-	
+	/// Kick off the queue-dequeue cycle
+	ioctl(fd, VIDIOC_QBUF, &buf);
+
 	/// Main Program Loop
 	///
 	while(!glfwWindowShouldClose(window))
